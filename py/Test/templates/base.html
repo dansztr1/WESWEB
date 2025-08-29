@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Min webbplats</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Min Webbplats</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="/">Hem</a></li>
+            <li><a href="/login">Logga in</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        {% block content %}
+        <!-- Här läggs sidans innehåll -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        &copy; Bla bla bla.
+    </footer>
+</body>
+</html>
