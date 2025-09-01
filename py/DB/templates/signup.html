@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Min webbplats</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Min Webbplats</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="/">Hem</a></li>
+            <li><a href="/login">Logga in</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2>Sign Up</h2>
+        <form action="{{url_for('signup')}}" method="post" class="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <input type="submit" value="Sign Up">
+
+            {% if error %}
+            <p style="color: red;">{{ error }}</p>
+            {% endif %}
+        </form>
+
+
+
+    </main>
+
+
+    <footer>
+        &copy; Bla bla bla.
+    </footer>
+</body>
+
+</html>
