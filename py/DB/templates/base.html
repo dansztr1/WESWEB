@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Min webbplats</title>
     <link rel="stylesheet" href="../static/style.css">
 </head>
+
 <body>
     <header>
         <h1>Min Webbplats</h1>
@@ -19,13 +21,30 @@
     </nav>
 
     <main>
-        {% block content %}
-        <!-- Här läggs sidans innehåll -->
-        {% endblock %}
+        <section class="blog-posts" id="blog-posts">
+            {% for post in posts %}
+            <article class="post">
+                <h2>{{ post.title }}</h2>
+                <p>{{ post.content }}</p>
+                <p>
+                    <em>
+                        <img src="{{ url_for('static', filename='images/' ~ (post.user.image or 'default_profile.jpg')) }}"
+                            alt="Profile picture of {{ post.user.username }}" class="profile-pic">
+                        By {{ post.user.username }} on {{ post.time | timestamp_to_datetime }}
+                    </em>
+                </p>
+            </article>
+            {% endfor %}
+        </section>
+
+
     </main>
+
+
 
     <footer>
         &copy; Bla bla bla.
     </footer>
 </body>
+
 </html>
