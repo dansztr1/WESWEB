@@ -1,8 +1,11 @@
-from flask import Flask, render_template, redirect, url_for, request, session
+from flask import Flask, render_template, redirect, url_for, request, session, current_app
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
+from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 from datetime import datetime, timezone
 from sqlalchemy import ForeignKey
+import os
+from werkzeug.utils import secure_filename
+
 
 class Base(DeclarativeBase):
   pass
@@ -25,17 +28,15 @@ class User(db.Model):
     image: Mapped[str] = mapped_column(default="default_profile.jpg")
 class Posts(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))  # foreign key to User
-    time: Mapped[int]  # UNIX timestamp
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))  
+    time: Mapped[int] 
     title: Mapped[str]
     content: Mapped[str]
 
     
 @app.route("/") 
 def home():
-    # Get Posts
-    posts = Posts.query.order_by(Posts.time.desc()).all()
-    
+    posts = Posts.query.order_by(Posts.time.desc()).all()    
     return render_template("base.html", posts=posts)
 
 @app.template_filter("timestamp_to_datetime")
@@ -78,7 +79,6 @@ def signup():
             error_msg = "Username or email already taken."
             return render_template("signup.html", error=error_msg)
         
-        # If no duplicates, create new user
         user = User(
             username=username,
             email=email,
@@ -92,9 +92,7 @@ def signup():
 
 
 
-import os
-from werkzeug.utils import secure_filename
-from flask import current_app
+
 
 @app.route("/memberarea", methods=["GET", "POST"])
 def memberarea():
@@ -107,7 +105,6 @@ def memberarea():
         form_type = request.form.get("form_type")
 
         if form_type == "post_form":
-            # Handle new post creation
             title = request.form.get("title")
             content = request.form.get("content")
             time_now = datetime.now(timezone.utc).timestamp()
@@ -122,7 +119,6 @@ def memberarea():
             db.session.commit()
 
         elif form_type == "image_form":
-            # Handle profile image upload
             file = request.files.get("profile_image")
             if file and file.filename != "":
                 filename = secure_filename(file.filename)
