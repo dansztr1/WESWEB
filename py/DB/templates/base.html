@@ -16,28 +16,19 @@
     <nav>
         <ul>
             <li><a href="/">Hem</a></li>
-            <li><a href="/login">Logga in</a></li>
+            {% if not session.get("logged_in") %}
+                <li><a href="/login">Log in</a></li>
+            {% else %}
+                <li><a href="{{url_for('memberarea')}}">Member area</a></li>
+                <li><a href="/logout">Log out</a></li>
+            {% endif %}
         </ul>
     </nav>
 
     <main>
-        <section class="blog-posts" id="blog-posts">
-            {% for post in posts %}
-            <article class="post">
-                <h2>{{ post.title }}</h2>
-                <p>{{ post.content }}</p>
-                <p>
-                    <em>
-                        <img src="{{ url_for('static', filename='images/' ~ (post.user.image or 'default_profile.jpg')) }}"
-                            alt="Profile picture of {{ post.user.username }}" class="profile-pic">
-                        By {{ post.user.username }} on {{ post.time | timestamp_to_datetime }}
-                    </em>
-                </p>
-            </article>
-            {% endfor %}
-        </section>
-
-
+        {% block content %}
+       
+        {% endblock %}
     </main>
 
 

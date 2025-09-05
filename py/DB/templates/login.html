@@ -1,49 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Min webbplats</title>
-    <link rel="stylesheet" href="../static/style.css">
-</head>
+{% block content %}
+<h2>Log in</h2>
+<form action="{{url_for('login')}}" method="post" class="login-form">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
 
-<body>
-    <header>
-        <h1>Min Webbplats</h1>
-    </header>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
 
-    <nav>
-        <ul>
-            <li><a href="/">Hem</a></li>
-            <li><a href="/login">Logga in</a></li>
-        </ul>
-    </nav>
+    <input type="submit" value="Log in">
+    <a href="{{url_for('signup')}}" class="signup-button">Sign Up</a>
 
-    <main>
-        <h2>Log in</h2>
-        <form action="{{url_for('login')}}" method="post" class="login-form">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-
-            <input type="submit" value="Log in">
-            <a href="{{url_for('signup')}}" class="signup-button">Sign Up</a>
-
-            {% if error %}
-            <p style="color: red;">{{ error }}</p>
-            {% endif %}
-        </form>
-
-
-    </main>
-
-
-    <footer>
-        &copy; Bla bla bla.
-    </footer>
-</body>
-
-</html>
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
+</form>
+{% endblock %}

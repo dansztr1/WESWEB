@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="blog-posts" id="blog-posts">
+    {% for post in posts %}
+    <article class="post">
+        <h2>{{ post.title }}</h2>
+        <p>{{ post.content }}</p>
+        <p>
+            <em>
+                <img src="{{ url_for('static', filename='images/' ~ (post.user.image or 'default_profile.jpg')) }}"
+                     alt="Profile picture of {{ post.user.username }}" class="profile-pic">
+                By {{ post.user.username }} on {{ post.time | timestamp_to_datetime }}
+            </em>
+        </p>
+    </article>
+    {% endfor %}
+</section>
+{% endblock %}
