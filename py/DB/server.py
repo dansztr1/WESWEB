@@ -23,17 +23,12 @@ class User(db.Model):
     email: Mapped[str]
     password: Mapped[str]
     image: Mapped[str] = mapped_column(default="default_profile.jpg")
-
-    # optional: backref to posts
-    posts = relationship("Posts", back_populates="user")
-
 class Posts(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))  # foreign key to User
     time: Mapped[int]  # UNIX timestamp
     title: Mapped[str]
     content: Mapped[str]
-    user = relationship("User", back_populates="posts")  # link to User
 
     
 @app.route("/") 
@@ -57,7 +52,7 @@ def login():
 
         if user and user.password == password:
             session["loggedIn"] = True
-            session["username"] = user.username  # store username in session
+            session["username"] = user.username  
             return redirect(url_for("memberarea"))
         else:
             return render_template("login.html", error="Username or Password incorrect!")
