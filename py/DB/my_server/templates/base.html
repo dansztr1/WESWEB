@@ -4,18 +4,18 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Min webbplats</title>
+    <title>Website</title>
     <link rel="stylesheet" href="../static/style.css">
 </head>
 
 <body>
     <header>
-        <h1>Min Webbplats</h1>
+        <h1>Blog</h1>
     </header>
 
     <nav>
         <ul>
-            <li><a href="/">Hem</a></li>
+            <li><a href="/">Home</a></li>
             {% if not session.get("logged_in") %}
                 <li><a href="/login">Log in</a></li>
             {% else %}

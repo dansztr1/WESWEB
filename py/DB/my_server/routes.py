@@ -3,7 +3,7 @@ from my_server.database import Posts, User, db
 
 from werkzeug.utils import secure_filename
 from datetime import datetime, timezone
-from flask import Flask, render_template, redirect, url_for, request, session, current_app
+from flask import Flask, render_template, redirect, url_for, request, session, current_app, abort
 import os
 
 @app.route("/") 
@@ -62,7 +62,7 @@ def signup():
 @app.route("/memberarea", methods=["GET", "POST"])
 def memberarea():
     if not session.get("logged_in"):
-        return redirect(url_for("login"))
+        return abort(401)
 
     user = User.query.filter_by(username=session.get("username")).first()
 
@@ -91,7 +91,7 @@ def memberarea():
 @app.route("/settings", methods=["GET", "POST"])
 def settings():
     if not session.get("logged_in"):
-        return redirect(url_for("login"))
+        return abort(401)
 
     user = User.query.filter_by(username=session.get("username")).first()
 
@@ -127,7 +127,3 @@ def settings():
 
     return render_template("settings.html", user=user)
   
-
-@app.template_filter("timestamp_to_datetime")
-def timestamp_to_datetime(unix_time):
-    return datetime.fromtimestamp(int(unix_time)).strftime('%Y-%m-%d %H:%M')
