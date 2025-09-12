@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section class="upload-profile-pic">
+    <h2>Change Profile Picture</h2>
+    <form action="{{ url_for('settings') }}" method="post" enctype="multipart/form-data" id="imageForm">
+        <input type="hidden" name="form_type" value="image_form" />
+        <label for="profile_image">Select image:</label>
+        <input type="file" id="profile_image" name="profile_image" accept="image/*" required />
+
+        <input type="submit" value="Upload Image" />
+    </form>
+
+    <div>
+        <p>Your current profile image:</p>
+        <img src="{{ url_for('static', filename='images/' ~ user.image) }}" alt="Profile image" width="100" />
+    </div>
+</section>
+
+
+<form action="{{url_for('settings')}}" method="post" class="login-form">
+    <h2>Change Password</h2>
+    <input type="hidden" name="form_type" value="change_form" />
+    <label for="current_password">Old Password:</label>
+    <input type="password" id="current_password" name="current_password" required>
+
+    <label for="new_password">New Password:</label>
+    <input type="password" id="new_password" name="new_password" required>
+
+     <label for="confirm_password">Confirm Password:</label>
+    <input type="password" id="confirm_password" name="confirm_password" required>
+
+    <input type="submit" value="Change Password">
+   
+
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    {% if success %}
+    <p style="color: rgb(47, 255, 0);">{{ success }}</p>
+    {% endif %}
+</form>
+{% endblock %}

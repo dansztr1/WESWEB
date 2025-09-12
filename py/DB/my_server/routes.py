@@ -1,48 +1,15 @@
-from flask import Flask, render_template, redirect, url_for, request, session, current_app
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
-from datetime import datetime, timezone
-from sqlalchemy import ForeignKey
-import os
+from my_server import app
+from my_server.database import Posts, User, db
+
 from werkzeug.utils import secure_filename
+from datetime import datetime, timezone
+from flask import Flask, render_template, redirect, url_for, request, session, current_app
+import os
 
-class Base(DeclarativeBase):
-  pass
-
-app = Flask(__name__)
-db = SQLAlchemy(model_class=Base)
-app.secret_key = "akdijewidju83ye287"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project2.db"
-db.init_app(app)
-
-
-
-
-class User(db.Model):
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(unique=True)
-    email: Mapped[str]
-    password: Mapped[str]
-    image: Mapped[str] = mapped_column(default="default_profile.jpg")
-    posts = relationship("Posts", back_populates="user")
-
-class Posts(db.Model):
-    id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-    time: Mapped[int]  # UNIX
-    title: Mapped[str]
-    content: Mapped[str]
-    user = relationship("User", back_populates="posts") 
-
-    
 @app.route("/") 
 def home():
     posts = Posts.query.order_by(Posts.time.desc()).all()    
     return render_template("index.html", posts=posts)
-
-@app.template_filter("timestamp_to_datetime")
-def timestamp_to_datetime(unix_time):
-    return datetime.fromtimestamp(int(unix_time)).strftime('%Y-%m-%d %H:%M')
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -65,7 +32,6 @@ def login():
 def logout():
     session["logged_in"] = False
     return redirect(url_for("home"))
-
 
 @app.route("/signup", methods=["GET", "POST"]) 
 def signup():
@@ -93,9 +59,6 @@ def signup():
     
     return render_template("signup.html")
 
-
-
-
 @app.route("/memberarea", methods=["GET", "POST"])
 def memberarea():
     if not session.get("logged_in"):
@@ -121,6 +84,36 @@ def memberarea():
             db.session.add(post)
             db.session.commit()
 
+        
+        
+    return render_template("memberarea.html", user=user)
+
+@app.route("/settings", methods=["GET", "POST"])
+def settings():
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+
+    user = User.query.filter_by(username=session.get("username")).first()
+
+    if request.method == "POST":
+        form_type = request.form.get("form_type")
+
+        if form_type == "change_form":
+            current_password = request.form.get("current_password")
+            new_password = request.form.get("new_password")
+            confirm_password = request.form.get("confirm_password")
+
+
+            if user.password != current_password:
+                return render_template("settings.html", user=user, error="Current password is incorrect.")
+
+           
+            if new_password != confirm_password:
+                return render_template("settings.html", user=user, error="New passwords do not match.")
+
+            user.password = new_password
+            db.session.commit()
+            return render_template("settings.html", user=user, success="Password updated successfully.")
         elif form_type == "image_form":
             # Handle profile image upload
             file = request.files.get("profile_image")
@@ -130,12 +123,11 @@ def memberarea():
                 file.save(upload_path)
                 user.image = filename
                 db.session.commit()
+                
 
-    return render_template("memberarea.html", user=user)
+    return render_template("settings.html", user=user)
+  
 
-    
-with app.app_context():
-    db.create_all()
-
-if __name__ == "__main__":
-    app.run(host="localhost", port="8090",debug=True)
+@app.template_filter("timestamp_to_datetime")
+def timestamp_to_datetime(unix_time):
+    return datetime.fromtimestamp(int(unix_time)).strftime('%Y-%m-%d %H:%M')

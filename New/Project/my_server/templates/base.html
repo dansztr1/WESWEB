@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Website</title>
+  <link rel="stylesheet" href="../static/style.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="container">
+        <a href="#" class="logo">Website</a>
+        <ul class="nav-links">
+          <li><a href="{{url_for('index')}}">Home</a></li>
+          <li><a href="">Login</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="content container">
+        {% block content %}
+       
+        {% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; Test</p>
+    </div>
+  </footer>
+</body>
+</html>
