@@ -7,7 +7,7 @@ from sqlalchemy import ForeignKey
 
 class Base(DeclarativeBase):
   pass
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project2.db"
+
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
