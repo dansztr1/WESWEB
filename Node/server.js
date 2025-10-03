@@ -4,7 +4,7 @@ const app = express();
 
 
 app.get("/", (request, response) => {
-    ejs.readFile('./home.html', "utf8", (err, html)  => {
+    ejs.renderFile('./home.html', "utf8", (err, html)  => {
         if (err) {
             response.status(500).send("Internal server error")
         }
