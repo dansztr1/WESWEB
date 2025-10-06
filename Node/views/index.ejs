@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Movie Watchlist</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>My Movie Watchlist</h1>
+
+    <a href="/add" class="btn">+ Add New Movie</a>
+
+    <div class="section">
+      <h2>To Watch</h2>
+      <ul class="movie-list">
+        <!-- Loop through unwatched movies here -->
+        <li class="movie">
+          <span class="title">Movie Title</span>
+          <div class="actions">
+            <a href="/watch/1" class="btn small">Mark as Watched</a>
+            <a href="/delete/1" class="btn small danger">Delete</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Watched</h2>
+      <ul class="movie-list">
+        <!-- Loop through watched movies here -->
+        <li class="movie watched">
+          <span class="title">Movie Title</span>
+          <div class="actions">
+            <a href="/unwatch/1" class="btn small">Mark as Unwatched</a>
+            <a href="/delete/1" class="btn small danger">Delete</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
