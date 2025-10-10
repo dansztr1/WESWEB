@@ -1,16 +1,74 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const sqlite = require("node:sqlite");
+const { DatabaseSync } = require("node:sqlite");
+const database = new DatabaseSync("notes.db");
 const corsOption = {
-    origin: ["http://localhost:5173"]
-}
+  origin: ["http://localhost:5173"],
+};
 
-app.use(cors(corsOption))
+database.exec(`
+  CREATE TABLE IF NOT EXISTS data(
+    key TEXT PRIMARY KEY,
+    value TEXT,
+    completed INTEGER
+  ) STRICT
+`);
 
-app.get("/api", (req, res) => {
-    res.json({"Fruits": ["Apple", "Orange", "Banana"]})
+app.use(cors(corsOption));
+app.use(express.json());
+
+app.get("/getNotes", (req, res) => {
+  const query = database.prepare("SELECT * FROM data");
+  const allNotes = query.all();
+
+  res.send(allNotes);
+});
+
+app.post("/Completed", (req, res) => {
+  const { id, title, completed } = req.body;
+
+  if (!id || !title) {
+    return res.status(400).json({ error: "Missing id or title" });
+  }
+
+  try {
+    const update = database.prepare("UPDATE data SET completed = ? WHERE id = ?");
+    const result = update.run(completed, id);
+
+    if (result.changes === 0) {
+      return res.status(404).json({ error: "Note not found or nothing to update" });
+    }
+
+    res.json({ message: "Note updated successfully" });
+  } catch (error) {
+    console.error("Error updating note:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+app.post("/addNote", (req, res) => {
+  const { id, title } = req.body;
+
+  if (!id || !title) {
+    return res.status(400).json({ error: "Missing id or title" });
+  }
+
+  try {
+    const insert = database.prepare(
+      "INSERT INTO data (key, value, completed) VALUES (?, ?, 0)"
+    );
+    insert.run(id, title);
+
+    // res.status(200).json({ message: "Note added successfully", note: { id, title } });
+  } catch (error) {
+    console.error("Error inserting note:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 app.listen(3000, () => {
-    console.log("Server started on port 3000")
-})
+  console.log("Server started on port 3000");
+});

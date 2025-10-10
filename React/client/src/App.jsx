@@ -12,25 +12,40 @@ function App() {
   const [todos, setTodos] = useState([]);
 
   const fetchAPI = async () => {
-    const response = await axios.get("http://localhost:3000/api")
-    addTodo(response.data.Fruits[0])
-    addTodo(response.data.Fruits[1])
-    addTodo(response.data.Fruits[2])
-  }
+    try {
+      const response = await axios.get("http://localhost:3000/getNotes");
+
+      const notes = response.data; // should be an array of { key, value }
+
+      notes.forEach((note) => {
+        addTodo({ id: note.key, title: note.value, completed: false });
+      });
+    } catch (error) {
+      console.error("Failed to fetch notes:", error);
+    }
+  };
+
 
   useEffect(() => {
     fetchAPI();
   }, [])
 
 
-  function addTodo(title) {
-    setTodos((currentTodos) => {
-      return [
-        ...currentTodos,
-        { id: crypto.randomUUID(), title: title, completed: false }
-      ]
-    })
+  function createTodo(title) {
+    const id = crypto.randomUUID();
+    const todo = { id, title, completed: false };
+
+    axios.post("http://localhost:3000/addNote", { id, title});
+
+    setTodos((currentTodos) => [...currentTodos, todo]);
   }
+
+
+  function addTodo(todo) {
+    setTodos((currentTodos) => [...currentTodos, todo]);
+  }
+
+
 
   function toggleToDo(id, completed) {
     setTodos(currentTodos => {
@@ -50,7 +65,7 @@ function App() {
   }
 
   return <>
-    <NewTodoForm onSubmit={addTodo} />
+    <NewTodoForm onSubmit={createTodo} />
     <h1 className='header'>Todo List</h1>
     <TodoList todos={todos} toggleTodo={toggleToDo} deleteTodo={deleteTodo} />
   </>
