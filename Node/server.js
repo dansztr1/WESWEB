@@ -1,21 +1,27 @@
-const express = require('express');
-const sqlite = require('node:sqlite');
+const express = require("express");
+const session = require("express-session");
 const app = express();
-const { DatabaseSync } = require('node:sqlite');
-const database = new DatabaseSync(':memory:');
 
-app.set('view engine', 'ejs');
-app.use(express.static('public'));
+app.set("view engine", "ejs");
 
 
+app.use(
+  session({
+    secret: "123123712",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // secure should be true in production with HTTPS
+  })
+);
 
+app.use(express.static("public"));
 
-app.get('/', (req, res) => {
-    res.render('index');
+app.get("/", (req, res) => {
+  res.render("index", (user = req.session.username));
 });
 
-app.get('/add', (req, res) => {
-    res.render('add');
+app.get("/login", (req, res) => {
+  res.render("login", (user = req.session.username));
 });
 
-app.listen(3000, () => console.log('App Running on http://localhost:3000'))
+app.listen(3000, () => console.log("App Running on http://localhost:3000"));
