@@ -8,6 +8,8 @@ const corsOption = {
   origin: ["http://localhost:5173"],
 };
 
+// CHECK GITHUB FOR NT
+
 database.exec(`
   CREATE TABLE IF NOT EXISTS data(
     key TEXT PRIMARY KEY,
@@ -27,21 +29,45 @@ app.get("/getNotes", (req, res) => {
 });
 
 app.post("/Completed", (req, res) => {
-  const { id, title, completed } = req.body;
+  const { id, completed } = req.body;
 
-  if (!id || !title) {
+  if (!id) {
     return res.status(400).json({ error: "Missing id or title" });
   }
 
   try {
-    const update = database.prepare("UPDATE data SET completed = ? WHERE id = ?");
+    const update = database.prepare(
+      "UPDATE data SET completed = ? WHERE key = ?"
+    );
     const result = update.run(completed, id);
 
     if (result.changes === 0) {
-      return res.status(404).json({ error: "Note not found or nothing to update" });
+      return res
+        .status(404)
+        .json({ error: "Note not found or nothing to update" });
     }
 
     res.json({ message: "Note updated successfully" });
+  } catch (error) {
+    console.error("Error updating note:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/delete", (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Missing id" });
+  }
+
+  try {
+    const update = database.prepare(
+      "DELETE from data WHERE key = ?"
+    );
+    const result = update.run(id);
+
+    res.json({ message: "Note deleted successfully" });
   } catch (error) {
     console.error("Error updating note:", error);
     res.status(500).json({ error: "Internal server error" });

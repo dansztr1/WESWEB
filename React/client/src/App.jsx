@@ -18,7 +18,7 @@ function App() {
       const notes = response.data; // should be an array of { key, value }
 
       notes.forEach((note) => {
-        addTodo({ id: note.key, title: note.value, completed: false });
+        addTodo({ id: note.key, title: note.value, completed: note.completed });
       });
     } catch (error) {
       console.error("Failed to fetch notes:", error);
@@ -35,7 +35,7 @@ function App() {
     const id = crypto.randomUUID();
     const todo = { id, title, completed: false };
 
-    axios.post("http://localhost:3000/addNote", { id, title});
+    axios.post("http://localhost:3000/addNote", { id, title });
 
     setTodos((currentTodos) => [...currentTodos, todo]);
   }
@@ -45,12 +45,22 @@ function App() {
     setTodos((currentTodos) => [...currentTodos, todo]);
   }
 
+  function updateTodo(id, completed) {
+    if (completed === true) {
+      completed = 1
+      axios.post("http://localhost:3000/Completed", { id, completed});
+    } else {
+      completed = 0
+      axios.post("http://localhost:3000/Completed", { id, completed});
+    }
+  }
 
 
   function toggleToDo(id, completed) {
     setTodos(currentTodos => {
       return currentTodos.map(todo => {
         if (todo.id === id) {
+          updateTodo(id, completed);
           return { ...todo, completed }
         }
         return todo
@@ -60,6 +70,7 @@ function App() {
 
   function deleteTodo(id) {
     setTodos(currentTodos => {
+      axios.post("http://localhost:3000/delete", { id});
       return currentTodos.filter(todo => todo.id !== id)
     })
   }
