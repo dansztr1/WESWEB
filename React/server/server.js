@@ -1,14 +1,13 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const sqlite = require("node:sqlite");
+const bcrypt = require("bcrypt")
 const { DatabaseSync } = require("node:sqlite");
 const database = new DatabaseSync("notes.db");
 const corsOption = {
   origin: ["http://localhost:5173"],
 };
 
-// CHECK GITHUB FOR NT
 
 database.exec(`
   CREATE TABLE IF NOT EXISTS data(
