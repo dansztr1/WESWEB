@@ -66,7 +66,6 @@ app.post("/delete", (req, res) => {
     );
     const result = update.run(id);
 
-    res.json({ message: "Note deleted successfully" });
   } catch (error) {
     console.error("Error updating note:", error);
     res.status(500).json({ error: "Internal server error" });
